@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SPK Sampah - TPA Galuga (Kab. Bogor)</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Panggil Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav>
+    <div class="nav-brand">SPK Sampah</div>
+    <div class="nav-links">
+      <a href="#dashboard">Dashboard</a>
+      <a href="#data">Data Kecamatan</a>
+      <a href="#laporan">Laporan</a>
+      <a href="#tentang">Tentang</a>
+    </div>
+    <nav class="navbar">
+      <main>
+        <!--<h2 id="welcomeMsg" style="font-size: 12px;"></h2>-->
+        <button onclick="logout()" style="font-size: 8px;">Logout</button>
+      </nav>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero" id="dashboard">
+  <main class="content">
+    <div style="width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,var(--green),#06b6d4);display:flex;align-items:center;justify-content:center;font-weight:800;color:#021">TPA</div>
+    <div class="brand">
+      <h1>SPK Timbulan Sampah — TPA Galuga (Kab. Bogor)</h1>
+      <p class="lead">Monitoring status timbulan sampah per kecamatan dan kapasitas TPA Galuga.</p>
+    </div>
+    <a href="#data" class="cta">Cek Yukkk..</a>
+    </main>
+  </section>
+  
+  <!-- Tentang Sistem -->
+  <section class="card" id="tentang" style="margin-top:20px">
+    <div style="display: flex;justify-content: center;align-items: center;">
+      <div class="small" style="font-size: 20px;">Tentang Sistem</div>
+    </div>
+    <div style="display: flex;justify-content: center;align-items: center;">
+      <p style="color:var(--muted);font-size: 15px;text-align:center">Sistem Penunjang Keputusan ini dirancang untuk membantu monitoring timbulan sampah di Kabupaten Bogor dengan fokus pada TPA Galuga. Fitur utama meliputi dashboard monitoring, input data per kecamatan, status real-time, grafik visualisasi, serta laporan.</p>
+    </div>
+  </section>
+
+  <!-- Dashboard Cards -->
+  <section class="grid">
+    <section class="card big">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div class="small">Kapasitas TPA Galuga (ton/hari)</div>
+          <div class="summary"><div class="value" id="capacityValue">1100</div><div class="small">ton/hari</div></div>
+        </div>
+        <div>
+          <div class="small">Status Kabupaten</div>
+          <div id="countyStatus" class="status-pill safety"><span class="dot" style="background:var(--green)"></span> Safety</div>
+        </div>
+      </div>
+      
+      <div style="margin-top:16px">
+        <div class="small">Total Timbulan Hari Ini</div>
+        <div style="display:flex;align-items:center;gap:12px;margin-top:8px">
+          <div style="font-size:36px;font-weight:800" id="totalTon">0</div>
+          <div class="small">ton / hari</div>
+        </div>
+        
+        <div style="margin-top:14px" class="small">Legend</div>
+        <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+          <div class="status-pill safety"><span class="dot" style="background:var(--green)"></span> Safety &lt;= 80% kapasitas</div>
+          <div class="status-pill warning"><span class="dot" style="background:var(--orange)"></span> Warning 80% - 100% kapasitas</div>
+          <div class="status-pill danger"><span class="dot" style="background:var(--red)"></span> Danger &gt; kapasitas</div>
+        </div>
+      </div>
+    </section>
+    
+    <section class="card">
+      <div class="small">Status Rincian Kecamatan</div>
+      <table>
+        <thead>
+          <tr><th>No</th><th>Kecamatan</th><th>Ton / hari</th><th>Status</th></tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </section>
+  </section>
+  
+  <!-- Laporan Risiko CH4 -->
+  <section class="card" id="laporan" style="margin-top:20px"> 
+    <div style="display: flex;justify-content: center;align-items: center;">
+      <div class="small" style="font-size: 20px;">Laporan Risiko CH₄</div>
+    </div>
+    <div id="methanePercent" class="status-pill safety" style="display: flex;justify-content: center;align-items: center;">
+      <span class="dot" style="background:var(--green)"></span> 0%
+    </div>
+  </section>
+  
+  <!-- Grafik -->
+  <section class="section" id="data">
+    <div style="display: flex;justify-content: center;align-items: center; font-size: 20px;">
+      <h2>Grafik Timbulan Sampah per Kecamatan</h2>
+    </div>
+    <div class="ukuran" style="display: flex;justify-content: center;align-items: center;">
+      <div class="chart-container">
+        <canvas id="barChart"></canvas>
+      </div>
+      <div class="chart-container">
+        <canvas id="pieChart"></canvas>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Form Tambah/Ubah Data -->
+  <section class="card" style="margin-top:20px">
+    <div style="display: flex;justify-content: center;align-items: center;">
+      <div class="small" style="margin-right: 20px;">Tambah / Ubah Data Kecamatan</div>
+      <div class="controls">
+        <form id="formData">
+          <input id="kName" type="text" placeholder="Nama Kecamatan (contoh: Cibinong)" />
+          <input id="kTon" type="number" placeholder="Ton per hari" min="0" />
+          <button id="addBtn">Tambah / Update</button> 
+        </form>
+        <select id="presetSel">
+          <option value="">Pilih contoh kecamatan</option>
+          <option value='{"name":"Cibinong","ton":120}'>Cibinong - 120</option>
+          <option value='{"name":"Dramaga","ton":90}'>Dramaga - 90</option>
+          <option value='{"name":"Bogor Selatan","ton":200}'>Bogor Selatan - 200</option>
+        </select>
+        <button id="resetBtn" class="btn-outline">Reset Semua</button>
+      </div>
+    </div>
+    <div class="kecamatan-list" id="kList"></div>
+  </section>
+
+
+
+  <!-- Footer -->
+  <footer>
+    &copy; 2025 SPK Sampah TPA Galuga — Dibuat untuk keperluan monitoring dan analisis.
+  </footer>
+
+  <!-- Script -->
+  <script src="script.js"></script>
+  <script>
+    // Cek login status
+    const loggedIn = JSON.parse(localStorage.getItem("loggedInUser"));
+    if(!loggedIn){
+      alert("Harap login terlebih dahulu ❌");
+      window.location.href = "login.html";
+    } else {
+      document.getElementById("welcomeMsg").textContent =
+        "Halo, " + loggedIn.username + " 👋 Selamat datang di Dashboard SPK Sampah 🚀";
+    }
+
+    // Fungsi logout
+    function logout(){
+      localStorage.removeItem("loggedInUser");
+      alert("Anda telah logout ✅");
+      window.location.href = "login.html";
+    }
+  </script>
+</body>
+</html>

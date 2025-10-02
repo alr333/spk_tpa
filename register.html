@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register - SPK Sampah TPA Galuga</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="login-page">
+  <div class="login-container">
+    <h1 class="login-title">SPK Sampah TPA Galuga</h1>
+    <div class="card login-card">
+      <h2>Register</h2>
+      <form id="registerForm">
+        <input type="text" id="regUsername" placeholder="Username" required />
+        <input type="password" id="regPassword" placeholder="Password" required />
+        <input type="password" id="regConfirm" placeholder="Konfirmasi Password" required />
+        <button type="submit">Daftar</button>
+      </form>
+      <p class="login-footer">Sudah punya akun? <a href="login.html" style="color:var(--blue)">Login</a></p>
+    </div>
+  </div>
+
+  
+  <!-- Script -->
+   <script>
+const regForm = document.getElementById("registerForm");
+
+  regForm.addEventListener("submit", function(e){
+    e.preventDefault();
+
+    const user = document.getElementById("regUsername").value.trim();
+    const pass = document.getElementById("regPassword").value.trim();
+    const confirm = document.getElementById("regConfirm").value.trim();
+
+    // validasi konfirmasi password
+    if(pass !== confirm){
+      alert("⚠️ Password dan konfirmasi tidak sama!");
+      return;
+    }
+
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+
+    // cek kalau username udah ada
+    if(users.find(u => u.username === user)){
+      alert("⚠️ Username sudah dipakai!");
+      return;
+    }
+
+    users.push({username: user, password: pass});
+    localStorage.setItem("users", JSON.stringify(users));
+
+    alert("✅ Registrasi berhasil, silakan login!");
+    window.location.href = "login.html";
+  });
+  </script>
+
+</body>
+</html>
